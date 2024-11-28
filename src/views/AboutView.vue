@@ -80,7 +80,7 @@ export default {
       var res = await axios.get("http://localhost:5000/authorize"); //await axios.get("https://express-app-r2vg.onrender.com/authorize");
       var url = res.data;
       window.location.href = url;
-      // window.open( //'noopener, noreferrer'
+      // window.open( //'noopener, noreferrer'x
       //   url,
       //   '_target', // <- This is what makes it open in a new window.
       //   'noopener, noreferrer'
