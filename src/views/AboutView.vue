@@ -113,7 +113,16 @@ export default {
     async authorize() {
       debugger;
       var res = await axios.get("https://express-app-r2vg.onrender.com/authorize"); //await axios.get("https://express-app-r2vg.onrender.com/authorize");
-      var url = res.data;
+      var response = res.data;
+      if(!response || !response.ok) {
+        alert(response.status);
+        return;
+      }
+      if(response.status == 'Client is authorized already.') {
+        alert(response.status);
+        return;
+      }
+      var url = response.data.authUrl;
       window.location.href = url;
       // window.open( //'noopener, noreferrer'x
       //   url,
