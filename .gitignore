@@ -28,3 +28,4 @@ pnpm-debug.log*
 /public/cordova.js
 ./node_modules
 ./src-cordova/node_modules
+/src-cordova/development
