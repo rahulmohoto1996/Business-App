@@ -17,6 +17,15 @@
     <button @click="readDataFromGoogleDriveFile">read data from google drive file</button>
     <textarea v-model="beautifyDataFromFile"></textarea>
   </div>
+  <div>
+    <button @click="searchByFolderName">search by folderName</button>
+    <select v-model="selectedGodown" @change="selectGodown">
+      <option v-for="n in godowns" :value="n.key" :disabled="n.disabled">
+        {{ n.value }}
+      </option>
+    </select>
+    <textarea v-model="beautifySearchedFolder"></textarea>
+  </div>
   <!-- <div>
     <button @click="extractFromSheetJS_test">Test JS</button>
   </div> -->
@@ -62,7 +71,14 @@ export default {
       boroghorFiles: null,
       showTests: false,
       parsedDataFromFile: null,
-      inProgress: false
+      inProgress: false,
+      godowns: [
+        {key: 'select a godown', value: 'select a godown', disabled: true},
+        {key: 'Boroghor', value: 'Boroghor', disabled: false},
+        {key: 'Senpara', value: 'Senpara', disabled: false}
+      ],
+      selectedGodown: null,
+      searchedFolder: null,
     }
   },
 
@@ -81,6 +97,12 @@ export default {
 
     beautifyDataFromFile() {
       var data = this.parsedDataFromFile;
+      var beautifulData = JSON.stringify(data, null, 2);
+      return beautifulData;
+    },
+
+    beautifySearchedFolder() {
+      var data = this.searchedFolder;
       var beautifulData = JSON.stringify(data, null, 2);
       return beautifulData;
     }
@@ -112,7 +134,7 @@ export default {
 
     async authorize() {
       debugger;
-      var res = await axios.get("https://express-app-r2vg.onrender.com/authorize"); //await axios.get("https://express-app-r2vg.onrender.com/authorize");
+      var res = await axios.get("https://express-app-r2vg.onrender.com/authorize"); //"http://localhost:5000/authorize" //await axios.get("https://express-app-r2vg.onrender.com/authorize");
       var response = res.data;
       if(!response || !response.ok) {
         alert(response.status);
@@ -122,7 +144,7 @@ export default {
         alert(response.status);
         return;
       }
-      var url = response.data.authUrl;
+      var url = response.authUrl;
       window.location.href = url;
       // window.open( //'noopener, noreferrer'x
       //   url,
@@ -166,6 +188,29 @@ export default {
       }
       this.parsedDataFromFile = res.parsedData;
       this.inProgress = false;
+    },
+
+    async searchFolderByNameFromGoogleDrive(folderName) {
+      debugger;
+      this.inProgress = true;
+      if(!folderName) return;
+      var url = `https://express-app-r2vg.onrender.com/searchFolderFromDrive/${folderName}`; //http://localhost:5000 //https://express-app-r2vg.onrender.com
+      var res = await axios.get(url);
+      res = res.data;
+      if(!res || !res.ok) {
+        alert(res.status);
+        this.inProgress = false;
+        return;
+      }
+      this.searchedFolder = res.folders;
+      this.inProgress = false;
+    },
+
+    async selectGodown() {
+      debugger;
+      var selectedGodown = this.selectedGodown;
+      console.log(selectedGodown);
+      var searchedFolder = await this.searchFolderByNameFromGoogleDrive(selectedGodown);
     }
 
 
