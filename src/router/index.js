@@ -1,15 +1,21 @@
-/* #version=0.0.0-0#3 rm 2024-06-26T18:42:35 CF5F2F59F8CC2ED6 */
-/* #version=0.0.0-0#2 rm 2024-06-26T18:38:44 A6CD6B00E0CEB849 */
-import { createRouter, createWebHistory } from "vue-router";
+/* #version=0.0.0-0#10 rm 2024-12-06T15:36:55 E20DDF1762695984 */
+/* #version=0.0.0-0#9 rm 2024-12-06T15:35:55 DAB7CDD4F5B18797 */
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 // import { createRouter } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import AboutView from "../views/AboutView.vue";
+import LoginRegistrationView from "@/views/LoginRegistrationView.vue";
 
 const routes = [
   {
-    path: "/",
+    path: "/home",
     name: "home",
     component: HomeView,
+  },
+  {
+    path: "/",
+    name: "LoginRegistration",
+    component: LoginRegistrationView
   },
   {
     path: "/about",
@@ -24,7 +30,8 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  // history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL), //https://stackoverflow.com/questions/60238731/vue-router-showing-blank-page-when-built
   routes,
 });
 
