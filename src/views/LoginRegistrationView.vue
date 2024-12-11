@@ -21,7 +21,10 @@
                     </div>
 
                     <div class="fields">
-                        <button @click="login">Login</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button @click="login">Login</button>
+                            <spinner v-if="inProgress" size="small"></spinner>
+                        </div>
                         <a v-if="!isRegisteredAlready" href="javascript:void(0)" @click="toogleRegistration">New User? Register Here</a>
                     </div>
                 </div>
@@ -50,7 +53,10 @@
                     </div>
 
                     <div class="fields">
-                        <button @click="register">Register</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button @click="register">Register</button>
+                            <spinner v-if="inProgress" size="small"></spinner>
+                        </div>
                         <a href="javascript:void(0)" @click="gotoLogin">{{ registrationMessage }}</a>
                     </div>
                 </div>
@@ -93,6 +99,9 @@ import spinner from "@/components/spinner.vue";
 
 export default {
     name: "LoginRegistration",
+    components: {
+        spinner
+    },
     data() {
         return {
             isNewUser: false,
@@ -105,7 +114,8 @@ export default {
                 password: null
             },
             registrationMessage: 'Registered already? Goto login',
-            isRegisteredAlready: true
+            isRegisteredAlready: true,
+            inProgress: false
         }
     },
     methods: {
@@ -116,21 +126,25 @@ export default {
 
         async register() {
             debugger;
+            this.inProgress = true;
             var userMail = this.newUser.mail;
             var password = this.newUser.password;
             if (!userMail || !password) {
                 alert('mail or, password is not included.');
+                this.inProgress = false;
                 return;
             }
-            var res = await axios.get("http://localhost:5000/register/userMail/" + userMail + "/password/" + password); //http://localhost:5000/events/
+            var res = await axios.get("https://express-app-r2vg.onrender.com/register/userMail/" + userMail + "/password/" + password); //https://express-app-r2vg.onrender.com/ //http://localhost:5000/events/
             res = res.data;
             if (!res || !res.ok) {
                 alert("Couldn't register user. Status:" + res.status);
+                this.inProgress = false;
                 return;
             }
             localStorage.setItem('userId', res.userId);
             this.registrationMessage = 'Registration successful. Go to login';
             this.registeredUser.userId = res.userId;
+            this.inProgress = false;
             alert('User Registered Successfully.');
         },
 
@@ -141,21 +155,27 @@ export default {
 
         async login() {
             debugger;
+            this.inProgress = true;
             var userId = this.registeredUser.userId;
             var password = this.registeredUser.password;
             if(!userId || !password) {
                 alert('userId or, password not provided.');
+                this.inProgress = false;
                 return;
             }
-            var res = await axios.get("http://localhost:5000/login/userId/" + userId + "/password/" + password); //http://localhost:5000/events/
+            var res = await axios.get("https://express-app-r2vg.onrender.com/login/userId/" + userId + "/password/" + password); //https://express-app-r2vg.onrender.com/ //http://localhost:5000/events/
             res = res.data;
             if (!res || !res.ok) {
                 alert("User data unavailable. Status:" + res.status);
+                this.inProgress = false;
                 return;
             }
             var userData = res.data;
+            this.inProgress = false;
             if(userData.password === password) {
                 alert('Login Successful!');
+            } else {
+                alert('Incorrect password.');
             }
         }
 
